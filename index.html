@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruang Renung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F6F3;--ink:#1F2A26;--muted:#66726D;--line:#DCDFD9;--accent:#3E6454;
+  --serif:Newsreader,"Iowan Old Style",Georgia,serif;
+  --sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#121816;--ink:#E8ECE7;--muted:#9AA6A1;--line:#27312E;--accent:#8FB5A2;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#121816;--ink:#E8ECE7;--muted:#9AA6A1;--line:#27312E;--accent:#8FB5A2;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+.wrap{max-width:960px;margin:0 auto;padding:80px 24px 96px}
+
+.shell{display:grid;grid-template-columns:230px 1fr;gap:64px;align-items:start}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px)}
+.brand{font-family:var(--serif);font-weight:500;font-size:2.5rem;line-height:1.05;letter-spacing:-.01em;margin:0 0 6px}
+.brand a{text-decoration:none}
+.tagline{font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--accent);margin:0 0 24px}
+.intro{font-size:.93rem;line-height:1.7;color:var(--muted);margin:0 0 36px}
+.filters{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.filters button{font:inherit;font-size:.93rem;color:var(--muted);background:none;border:0;padding:4px 0 4px 12px;cursor:pointer;box-shadow:inset 2px 0 0 transparent;transition:color .2s,box-shadow .2s}
+.filters button:hover{color:var(--ink)}
+.filters button[aria-pressed="true"]{color:var(--accent);box-shadow:inset 2px 0 0 var(--accent)}
+
+.list{list-style:none;margin:0;padding:0 0 0 32px;border-left:1px solid var(--line)}
+.list li{position:relative;padding-bottom:48px}
+.list li:last-child{padding-bottom:0}
+.list li::before{content:"";position:absolute;left:-37px;top:11px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.entry{display:block;text-decoration:none}
+.when,.meta{font-size:.85rem;color:var(--muted)}
+.when{display:block;margin-bottom:4px}
+.entry h2{font-family:var(--serif);font-weight:500;font-size:1.75rem;line-height:1.2;margin:0 0 8px;transition:color .2s}
+.entry:hover h2{color:var(--accent)}
+.entry p{margin:0 0 8px;color:var(--muted)}
+
+.back{display:inline-block;font-size:.9rem;color:var(--muted);text-decoration:none;margin-bottom:36px}
+.back:hover{color:var(--ink)}
+.reader{max-width:660px}
+article h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.2rem,7vw,3.2rem);line-height:1.12;letter-spacing:-.01em;margin:0 0 14px}
+article .meta{display:block;margin-bottom:44px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+article .body p{font-family:var(--serif);font-size:1.25rem;line-height:1.8;margin:0 0 1.4em}
+.next{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+.next a{display:block;font-family:var(--serif);font-size:1.4rem;color:var(--ink);text-decoration:none;margin-top:2px}
+.next a:hover{color:var(--accent)}
+.note{font-family:var(--sans)!important;font-size:.9rem!important;line-height:1.7!important;color:var(--muted);margin-top:2.5em!important;padding-top:20px;border-top:1px solid var(--line)}
+footer{margin-top:72px;font-size:.85rem;color:var(--muted)}
+
+@media (max-width:760px){
+  .wrap{padding-top:56px}
+  .shell{grid-template-columns:1fr;gap:40px}
+  .side{position:static}
+  .intro{margin-bottom:24px}
+  .filters{flex-direction:row;flex-wrap:wrap;gap:8px}
+  .filters button{border:1px solid var(--line);border-radius:999px;padding:3px 15px;box-shadow:none}
+  .filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);box-shadow:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ==========================================================
+   CARA MENAMBAH TULISAN
+   Salin satu blok { ... } di ESSAYS, tempel di awal daftar,
+   lalu ganti isinya. "id" hanya huruf kecil, angka, dan tanda
+   hubung. Setiap paragraf ditulis dalam satu tanda kutip.
+   ========================================================== */
+const SITE = {
+  title: "Ruang Renung",
+  tagline: "Arsip pemikiran",
+  intro: "Catatan tentang apa yang saya pelajari, pertanyakan, dan renungkan, dari manajemen dan ekonomi hingga hal-hal kecil yang kerap luput."
+};
+
+const ESSAYS = [
+  {
+    id: "kebersamaan-bukan-soal-frekuensi",
+    title: "Kebersamaan Bukan Soal Frekuensi",
+    topic: "Refleksi",
+    date: "2026-08-14",
+    excerpt: "Mengapa pertemuan yang jarang tetap bisa terasa dekat dan bermakna?",
+    body: [
+      "Pernah nggak kamu merasa dekat dengan seseorang, padahal terakhir ketemu udah berbulan-bulan lalu? Menurut definisi umum, itu seharusnya nggak masuk akal.",
+      "Definisi yang umum beredar di internet maupun di masyarakat menyebutkan bahwa kebersamaan merupakan sebuah kondisi disaat orang berkumpul, merasa terikat secara batin, dan saling mendukung. Salah satu manfaatnya disebut membuat hidup terasa lebih tenang dan ringan. Akan tetapi, apakah pernah terfikirkan “apakah manfaat itu benar-benar ada, atau justru menjadi beban bagi personal dalam menjalaninya?”.",
+      "Contohnya seperti seseorang yang kesehariannya bekerja kantoran (full-time) dengan temannya yang bekerja sebagai freelancer (part-time). Waktu keduanya jelas tidak fleksibel setara, orang kantoran terikat jam kerja, sementara freelancer punya ruang gerak yang lebih longgar. Jika kebersamaan benar-benar diukur dari frekuensi pertemuan, seharusnya hubungan keduanya perlahan merenggang karena kesempatan bertemu yang jarang. Tapi kenyataannya sering kali tidak begitu. Ketika mereka akhirnya sempat bertemu meski hanya sesekali dalam sebulan atau bahkan lebih jarang, obrolan tetap mengalir seperti tidak ada jarak waktu di antaranya. Tidak butuh waktu lama untuk “menyambung” kembali, dan pertemuan singkat itu tetap terasa cukup untuk membuat keduanya merasa dekat. Di sinilah letak pertanyaannya: jika frekuensi benar-benar penentu utama kebersamaan, kenapa pertemuan yang jarang itu tetap terasa bermakna, bukannya terasa asing?",
+      "Dari fenomena ini, menurut opini pribadi saya, kebersamaan bukan sesuatu yang diharuskan hadir dalam pertemuan yang sering, melainkan sebuah kondisi di mana seseorang bisa merasakan kualitas dan makna dari pertemuan itu sendiri, betapa pun jarang pertemuan itu terjadi.",
+      "Tapi tentu ini bukan berarti frekuensi sama sekali tidak berperan. Karena frekuensi pertemuan itu sebenarnya juga diperlukan, jika hubungan yang benar-benar nol dan hubungan yang benar-benar tanpa pertemuan dalam waktu sangat lama pun berisiko memudar. Namun frekuensi di sini bukan syarat mutlak, tapi ia hanya salah satu jalan, bukan satu-satunya penentu kebersamaan. Tanpa frekuensi sama sekali, kedekatan bisa memudar meski kualitasnya tinggi.",
+      "Coba kita telaah lebih dalam soal opini pribadi saya ini. Di abad ke-21, dengan teknologi yang berkembang pesat, kebiasaan masyarakat sehari-hari tetap terlihat bergerombol dalam kelompok-kelompok tertentu, yang biasa disebut pertemanan atau circle. Namun dalam sebuah circle, seseorang lambat laun akan merasa semakin “sepi” seiring bertambahnya usia masing-masing anggotanya. Hal ini bukan tanpa sebab: bertambahnya usia hampir selalu diiringi bertambahnya tanggung jawab, pekerjaan, keluarga, atau urusan pribadi lain yang menuntut waktu. Akibatnya, waktu yang bisa dialokasikan untuk bertemu pun ikut menyusut.",
+      "Di titik inilah letak persoalannya: jika kebersamaan hanya bergantung pada frekuensi pertemuan, maka pertemanan seharusnya ikut memudar seiring bertambahnya usia dan menyempitnya waktu. Tapi pada praktiknya, banyak pertemanan justru tetap bertahan, bukan karena masih sering bertemu, melainkan karena masing-masing pihak menemukan cara lain untuk tetap terhubung: saling mendukung, saling mengingat, atau sekadar hadir ketika benar-benar dibutuhkan. Dengan kata lain, ketika frekuensi pertemuan tidak lagi bisa diandalkan, saling mendukung menjadi “mata uang” baru yang menjaga kebersamaan tetap hidup. Dan pada akhirnya, setiap pertemuan yang terjadi, sesedikit apa pun akan terasa lebih berkesan dan bermakna bagi setiap personalnya.",
+      "Hal ini bukan berarti frekuensi tidak penting, tapi ketika keduanya tidak bisa berjalan beriringan, kualitas dan makna adalah hal yang lebih layak diperjuangkan.",
+      "Pada akhirnya, kebersamaan bagi saya bukan soal seberapa sering dua orang berada di ruang yang sama, melainkan seberapa jauh mereka tetap bisa saling hadir secara pikiran, dukungan, dan makna, meski waktu dan jarak tidak selalu berpihak. Frekuensi mungkin memudahkan, tapi kualitaslah yang membuat sebuah pertemuan layak dikenang.",
+      "Jadi, mungkin pertanyaan yang lebih pantas untuk kita tanyakan bukan lagi “seberapa sering aku bertemu orang-orang di sekitarku?”, melainkan: “seberapa bermakna dan berkualitas pertemuan itu bagiku?”"
+    ],
+    note: "Catatan penulis: Tulisan ini murni hasil observasi dan refleksi personal saya, tanpa merujuk pada data atau penelitian tertentu, jadi anggaplah ini sebagai ajakan berpikir, bukan kesimpulan final."
+  }
+];
+
+/* ---------- Kode tampilan (tidak perlu diubah) ---------- */
+const app = document.getElementById("app");
+let topic = "Semua";
+const fmt = d => {
+  try { return new Date(d + "T00:00:00").toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"}); }
+  catch (e) { return d; }
+};
+const mins = e => Math.max(1, Math.round(e.body.join(" ").split(/\s+/).length / 200));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sorted = () => [...ESSAYS].sort((a, b) => b.date.localeCompare(a.date));
+const year = new Date().getFullYear();
+
+function home() {
+  document.title = SITE.title;
+  const topics = ["Semua", ...new Set(ESSAYS.map(e => e.topic))];
+  const items = sorted().filter(e => topic === "Semua" || e.topic === topic);
+  app.innerHTML = `
+    <div class="shell">
+      <div class="side">
+        <h1 class="brand"><a href="#">${esc(SITE.title)}</a></h1>
+        <p class="tagline">${esc(SITE.tagline)}</p>
+        <p class="intro">${esc(SITE.intro)}</p>
+        <div class="filters" role="group" aria-label="Saring berdasarkan topik">
+          ${topics.map(t => `<button type="button" data-t="${esc(t)}" aria-pressed="${t === topic}">${esc(t)}</button>`).join("")}
+        </div>
+      </div>
+      <div>
+        <ul class="list">
+          ${items.map(e => `<li><a class="entry" href="#${esc(e.id)}">
+            <span class="when">${fmt(e.date)}</span>
+            <h2>${esc(e.title)}</h2>
+            <p>${esc(e.excerpt)}</p>
+            <span class="meta">${esc(e.topic)}, ${mins(e)} menit membaca</span>
+          </a></li>`).join("")}
+        </ul>
+        <footer>&copy; ${year} ${esc(SITE.title)}</footer>
+      </div>
+    </div>`;
+  app.querySelectorAll(".filters button").forEach(b => b.onclick = () => { topic = b.dataset.t; home(); });
+}
+
+function read(id) {
+  const list = sorted();
+  const i = list.findIndex(e => e.id === id);
+  if (i < 0) return home();
+  const e = list[i], n = list[i + 1];
+  document.title = e.title + " | " + SITE.title;
+  app.innerHTML = `
+    <div class="reader">
+      <a class="back" href="#">Kembali ke arsip</a>
+      <article>
+        <h1>${esc(e.title)}</h1>
+        <span class="meta">${esc(e.topic)}, ${fmt(e.date)}, ${mins(e)} menit membaca</span>
+        <div class="body">${e.body.map(p => `<p>${esc(p)}</p>`).join("")}${e.note ? `<p class="note">${esc(e.note)}</p>` : ""}</div>
+      </article>
+      ${n ? `<div class="next">Tulisan sebelumnya<a href="#${esc(n.id)}">${esc(n.title)}</a></div>` : ""}
+      <footer>&copy; ${year} ${esc(SITE.title)}</footer>
+    </div>`;
+}
+
+function route() {
+  const id = location.hash.replace("#", "");
+  window.scrollTo(0, 0);
+  id ? read(id) : home();
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
