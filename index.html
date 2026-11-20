@@ -77,40 +77,14 @@ footer{margin-top:72px;font-size:.85rem;color:var(--muted)}
 <div class="wrap" id="app"></div>
 
 <script>
-/* ==========================================================
-   CARA MENAMBAH TULISAN
-   Salin satu blok { ... } di ESSAYS, tempel di awal daftar,
-   lalu ganti isinya. "id" hanya huruf kecil, angka, dan tanda
-   hubung. Setiap paragraf ditulis dalam satu tanda kutip.
-   ========================================================== */
+/* Tulisan dikelola lewat /admin dan disimpan di data/essays.json */
 const SITE = {
   title: "Ruang Renung",
   tagline: "Arsip pemikiran",
   intro: "Catatan tentang apa yang saya pelajari, pertanyakan, dan renungkan, dari manajemen dan ekonomi hingga hal-hal kecil yang kerap luput."
 };
 
-const ESSAYS = [
-  {
-    id: "kebersamaan-bukan-soal-frekuensi",
-    title: "Kebersamaan Bukan Soal Frekuensi",
-    topic: "Refleksi",
-    date: "2026-08-14",
-    excerpt: "Mengapa pertemuan yang jarang tetap bisa terasa dekat dan bermakna?",
-    body: [
-      "Pernah nggak kamu merasa dekat dengan seseorang, padahal terakhir ketemu udah berbulan-bulan lalu? Menurut definisi umum, itu seharusnya nggak masuk akal.",
-      "Definisi yang umum beredar di internet maupun di masyarakat menyebutkan bahwa kebersamaan merupakan sebuah kondisi disaat orang berkumpul, merasa terikat secara batin, dan saling mendukung. Salah satu manfaatnya disebut membuat hidup terasa lebih tenang dan ringan. Akan tetapi, apakah pernah terfikirkan “apakah manfaat itu benar-benar ada, atau justru menjadi beban bagi personal dalam menjalaninya?”.",
-      "Contohnya seperti seseorang yang kesehariannya bekerja kantoran (full-time) dengan temannya yang bekerja sebagai freelancer (part-time). Waktu keduanya jelas tidak fleksibel setara, orang kantoran terikat jam kerja, sementara freelancer punya ruang gerak yang lebih longgar. Jika kebersamaan benar-benar diukur dari frekuensi pertemuan, seharusnya hubungan keduanya perlahan merenggang karena kesempatan bertemu yang jarang. Tapi kenyataannya sering kali tidak begitu. Ketika mereka akhirnya sempat bertemu meski hanya sesekali dalam sebulan atau bahkan lebih jarang, obrolan tetap mengalir seperti tidak ada jarak waktu di antaranya. Tidak butuh waktu lama untuk “menyambung” kembali, dan pertemuan singkat itu tetap terasa cukup untuk membuat keduanya merasa dekat. Di sinilah letak pertanyaannya: jika frekuensi benar-benar penentu utama kebersamaan, kenapa pertemuan yang jarang itu tetap terasa bermakna, bukannya terasa asing?",
-      "Dari fenomena ini, menurut opini pribadi saya, kebersamaan bukan sesuatu yang diharuskan hadir dalam pertemuan yang sering, melainkan sebuah kondisi di mana seseorang bisa merasakan kualitas dan makna dari pertemuan itu sendiri, betapa pun jarang pertemuan itu terjadi.",
-      "Tapi tentu ini bukan berarti frekuensi sama sekali tidak berperan. Karena frekuensi pertemuan itu sebenarnya juga diperlukan, jika hubungan yang benar-benar nol dan hubungan yang benar-benar tanpa pertemuan dalam waktu sangat lama pun berisiko memudar. Namun frekuensi di sini bukan syarat mutlak, tapi ia hanya salah satu jalan, bukan satu-satunya penentu kebersamaan. Tanpa frekuensi sama sekali, kedekatan bisa memudar meski kualitasnya tinggi.",
-      "Coba kita telaah lebih dalam soal opini pribadi saya ini. Di abad ke-21, dengan teknologi yang berkembang pesat, kebiasaan masyarakat sehari-hari tetap terlihat bergerombol dalam kelompok-kelompok tertentu, yang biasa disebut pertemanan atau circle. Namun dalam sebuah circle, seseorang lambat laun akan merasa semakin “sepi” seiring bertambahnya usia masing-masing anggotanya. Hal ini bukan tanpa sebab: bertambahnya usia hampir selalu diiringi bertambahnya tanggung jawab, pekerjaan, keluarga, atau urusan pribadi lain yang menuntut waktu. Akibatnya, waktu yang bisa dialokasikan untuk bertemu pun ikut menyusut.",
-      "Di titik inilah letak persoalannya: jika kebersamaan hanya bergantung pada frekuensi pertemuan, maka pertemanan seharusnya ikut memudar seiring bertambahnya usia dan menyempitnya waktu. Tapi pada praktiknya, banyak pertemanan justru tetap bertahan, bukan karena masih sering bertemu, melainkan karena masing-masing pihak menemukan cara lain untuk tetap terhubung: saling mendukung, saling mengingat, atau sekadar hadir ketika benar-benar dibutuhkan. Dengan kata lain, ketika frekuensi pertemuan tidak lagi bisa diandalkan, saling mendukung menjadi “mata uang” baru yang menjaga kebersamaan tetap hidup. Dan pada akhirnya, setiap pertemuan yang terjadi, sesedikit apa pun akan terasa lebih berkesan dan bermakna bagi setiap personalnya.",
-      "Hal ini bukan berarti frekuensi tidak penting, tapi ketika keduanya tidak bisa berjalan beriringan, kualitas dan makna adalah hal yang lebih layak diperjuangkan.",
-      "Pada akhirnya, kebersamaan bagi saya bukan soal seberapa sering dua orang berada di ruang yang sama, melainkan seberapa jauh mereka tetap bisa saling hadir secara pikiran, dukungan, dan makna, meski waktu dan jarak tidak selalu berpihak. Frekuensi mungkin memudahkan, tapi kualitaslah yang membuat sebuah pertemuan layak dikenang.",
-      "Jadi, mungkin pertanyaan yang lebih pantas untuk kita tanyakan bukan lagi “seberapa sering aku bertemu orang-orang di sekitarku?”, melainkan: “seberapa bermakna dan berkualitas pertemuan itu bagiku?”"
-    ],
-    note: "Catatan penulis: Tulisan ini murni hasil observasi dan refleksi personal saya, tanpa merujuk pada data atau penelitian tertentu, jadi anggaplah ini sebagai ajakan berpikir, bukan kesimpulan final."
-  }
-];
+let ESSAYS = [];
 
 /* ---------- Kode tampilan (tidak perlu diubah) ---------- */
 const app = document.getElementById("app");
@@ -177,8 +151,31 @@ function route() {
   window.scrollTo(0, 0);
   id ? read(id) : home();
 }
+const slug = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "esai";
+
+async function load() {
+  app.innerHTML = '<p class="intro">Memuat tulisan...</p>';
+  try {
+    const r = await fetch("data/essays.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    const used = new Set();
+    ESSAYS = (data.essays || []).map(e => {
+      const base = slug(e.title || ""); let id = base, n = 2;
+      while (used.has(id)) id = base + "-" + n++;
+      used.add(id);
+      const body = String(e.body || "").split(/\n+/).map(p => p.trim()).filter(Boolean);
+      const first = (body[0] || "").split(/(?<=[.?!])\s/)[0];
+      return { ...e, id, topic: e.topic || "Refleksi", body, excerpt: e.excerpt || (first.length > 140 ? first.slice(0, 137).trimEnd() + "..." : first) };
+    });
+  } catch (err) {
+    app.innerHTML = '<p class="intro">Tulisan belum dapat dimuat. Coba muat ulang halaman.</p>';
+    return;
+  }
+  route();
+}
 window.addEventListener("hashchange", route);
-route();
+load();
 </script>
 </body>
 </html>
