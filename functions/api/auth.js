@@ -2,14 +2,13 @@
 // Jika repositorimu privat, ganti "public_repo" menjadi "repo".
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
-  const gate = url.searchParams.get("gate") === "1";
-  const state = (gate ? "g." : "d.") + crypto.randomUUID();
+  const state = crypto.randomUUID();
   const params = new URLSearchParams({
     client_id: env.GITHUB_CLIENT_ID,
     redirect_uri: `${url.origin}/api/callback`,
+    scope: "public_repo",
     state,
   });
-  if (!gate) params.set("scope", "public_repo");
   return new Response(null, {
     status: 302,
     headers: {

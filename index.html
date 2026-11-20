@@ -60,6 +60,10 @@ article .body p{font-family:var(--serif);font-size:1.25rem;line-height:1.8;margi
 .next a:hover{color:var(--accent)}
 .note{font-family:var(--sans)!important;font-size:.9rem!important;line-height:1.7!important;color:var(--muted);margin-top:2.5em!important;padding-top:20px;border-top:1px solid var(--line)}
 footer{margin-top:72px;font-size:.85rem;color:var(--muted)}
+.owner{margin-left:20px}
+.owner a,.owner-edit a{color:var(--muted);text-decoration:none;margin-right:16px}
+.owner-edit a{margin:0 0 0 20px;font-size:.9rem}
+.owner a:hover,.owner-edit a:hover{color:var(--ink);text-decoration:underline}
 
 @media (max-width:760px){
   .wrap{padding-top:56px}
@@ -121,7 +125,7 @@ function home() {
             <span class="meta">${esc(e.topic)}, ${mins(e)} menit membaca</span>
           </a></li>`).join("")}
         </ul>
-        <footer>&copy; ${year} ${esc(SITE.title)}</footer>
+        <footer>&copy; ${year} ${esc(SITE.title)}<span class="owner"><a href="#" data-login>Masuk</a></span></footer>
       </div>
     </div>`;
   app.querySelectorAll(".filters button").forEach(b => b.onclick = () => { topic = b.dataset.t; home(); });
@@ -135,47 +139,74 @@ function read(id) {
   document.title = e.title + " | " + SITE.title;
   app.innerHTML = `
     <div class="reader">
-      <a class="back" href="#">Kembali ke arsip</a>
+      <a class="back" href="#">Kembali ke arsip</a><span class="owner-edit" data-id="${esc(e.id)}"></span>
       <article>
         <h1>${esc(e.title)}</h1>
         <span class="meta">${esc(e.topic)}, ${fmt(e.date)}, ${mins(e)} menit membaca</span>
         <div class="body">${e.body.map(p => `<p>${esc(p)}</p>`).join("")}${e.note ? `<p class="note">${esc(e.note)}</p>` : ""}</div>
       </article>
       ${n ? `<div class="next">Tulisan sebelumnya<a href="#${esc(n.id)}">${esc(n.title)}</a></div>` : ""}
-      <footer>&copy; ${year} ${esc(SITE.title)}</footer>
+      <footer>&copy; ${year} ${esc(SITE.title)}<span class="owner"><a href="#" data-login>Masuk</a></span></footer>
     </div>`;
 }
 
 function route() {
   const id = location.hash.replace("#", "");
   window.scrollTo(0, 0);
+  if (id === "tulis" || id.startsWith("sunting-")) {
+    if (hasToken()) return loadEditor(() => window.RR ? window.RR.open(id) : home());
+    location.hash = "";
+    return;
+  }
   id ? read(id) : home();
 }
 const slug = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "esai";
+const hasToken = () => { try { return !!localStorage.getItem("rr_token"); } catch (e) { return false; } };
+
+/* Editor dimuat hanya jika pemilik sudah masuk atau menekan "Masuk" */
+function loadEditor(cb) {
+  if (window.RR) return cb && cb();
+  const s = document.createElement("script");
+  s.src = "editor.js";
+  s.onload = s.onerror = () => cb && cb();
+  document.head.appendChild(s);
+}
+
+function applyData(data) {
+  const used = new Set();
+  ESSAYS = (data.essays || []).map((e, i) => {
+    const base = slug(e.title || ""); let id = base, n = 2;
+    if (id === "tulis" || id.startsWith("sunting-")) id = "esai-" + id;
+    while (used.has(id)) id = base + "-" + n++;
+    used.add(id);
+    const body = String(e.body || "").split(/\n+/).map(p => p.trim()).filter(Boolean);
+    const first = (body[0] || "").split(/(?<=[.?!])\s/)[0];
+    return { ...e, id, _i: i, _t: e.title, topic: e.topic || "Refleksi", body, excerpt: e.excerpt || (first.length > 140 ? first.slice(0, 137).trimEnd() + "..." : first) };
+  });
+}
 
 async function load() {
   app.innerHTML = '<p class="intro">Memuat tulisan...</p>';
   try {
     const r = await fetch("data/essays.json", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
-    const data = await r.json();
-    const used = new Set();
-    ESSAYS = (data.essays || []).map(e => {
-      const base = slug(e.title || ""); let id = base, n = 2;
-      while (used.has(id)) id = base + "-" + n++;
-      used.add(id);
-      const body = String(e.body || "").split(/\n+/).map(p => p.trim()).filter(Boolean);
-      const first = (body[0] || "").split(/(?<=[.?!])\s/)[0];
-      return { ...e, id, topic: e.topic || "Refleksi", body, excerpt: e.excerpt || (first.length > 140 ? first.slice(0, 137).trimEnd() + "..." : first) };
-    });
+    applyData(await r.json());
   } catch (err) {
     app.innerHTML = '<p class="intro">Tulisan belum dapat dimuat. Coba muat ulang halaman.</p>';
     return;
   }
   route();
 }
+
+new MutationObserver(() => window.RR && window.RR.decorate()).observe(app, { childList: true });
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-login],[data-logout]");
+  if (!a) return;
+  e.preventDefault();
+  loadEditor(() => window.RR && (a.hasAttribute("data-login") ? window.RR.login() : window.RR.logout()));
+});
 window.addEventListener("hashchange", route);
-load();
+hasToken() ? loadEditor(load) : load();
 </script>
 </body>
 </html>
