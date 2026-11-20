@@ -1,7 +1,7 @@
 # GANTI baris "repo" dengan akun dan nama repositori GitHub-mu, contoh: budi/ruang-renung
 backend:
   name: github
-  repo: GANTI-USERNAME/GANTI-NAMA-REPOSITORI
+  repo: gamehome-oss/Ruang-Renung
   branch: main
   base_url: https://ruangrenung.pages.dev
   auth_endpoint: api/auth
