@@ -1,7 +1,7 @@
 /* Editor Ruang Renung. Dimuat hanya setelah pemilik masuk. */
 (function () {
   // GANTI dengan akun dan nama repositori GitHub-mu, contoh: "budi/ruang-renung"
-  const REPO = "GANTI-USERNAME/GANTI-NAMA-REPOSITORI";
+  const REPO = "gamegome-oss/Ruang-Renung";
   const BRANCH = "main";
   const FILE = "data/essays.json";
   const API = "https://api.github.com/repos/" + REPO + "/contents/" + FILE;
